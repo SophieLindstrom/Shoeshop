@@ -94,32 +94,42 @@ namespace Shoeshop
             }
 
         }
-        public static void RemoveCategory()
-            {
-
+        public static void PrintDatabase()
+        {
             using (var database = new ShoeshopContext())
             {
                 var categoryList = database.Categories;
-                        foreach (var category in categoryList)
-                        {
-                            Console.WriteLine(category.Id + "\t" + category.CategoryName);
-                
+                foreach (var category in categoryList)
+                {
+                    Console.WriteLine(category.Id + "\t" + category.CategoryName);
+
                 }
-                Console.Write("Vilken kategori vill du ta bort?: ");
+            }
+        }
+
+        public static void RemoveCategory()
+            {
+            using (var database = new ShoeshopContext())
+            { 
+                PrintDatabase();
+           
+                Console.Write("Vilket kategorinummer vill du ta bort?: ");
 
 
-                var categoryName = Console.ReadLine();
+                var categoryNumber = int.Parse(Console.ReadLine());
                 var removeCategory = new Models.Category
                 {
-                    CategoryName = categoryName
+                    Id = categoryNumber
 
-                };
-
+                 };
+                database.Attach(removeCategory);
                 database.Remove(removeCategory);
                 database.SaveChanges();
                 // System.Environment.Exit(1);
+                PrintDatabase();
             }
         }
+        
         static void Main(string[] args)
         {
             //bool showMenu = true;
