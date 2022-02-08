@@ -44,12 +44,12 @@ namespace Shoeshop
                 case "1":
                     ManageCategories();
                     return true;
-                // case "2":
-                // ManageProducts();
-                // return true;
-                //case "3":
-                //  Exit();
-                //  return true;
+                case "2":
+                    ManageProducts();
+                    return true;
+                case "3":
+                    Exit();
+                    return true;
                 default:
                     return true;
             }
@@ -77,6 +77,7 @@ namespace Shoeshop
         }
         public static void AddCategory()
         {
+            PrintDatabase();
             Console.Write("Vilken kategori vill du lägga till?: ");
             var categoryName = Console.ReadLine();
 
@@ -108,11 +109,11 @@ namespace Shoeshop
         }
 
         public static void RemoveCategory()
-            {
+        {
             using (var database = new ShoeshopContext())
-            { 
+            {
                 PrintDatabase();
-           
+
                 Console.Write("Vilket kategorinummer vill du ta bort?: ");
 
 
@@ -121,13 +122,39 @@ namespace Shoeshop
                 {
                     Id = categoryNumber
 
-                 };
+                };
                 database.Attach(removeCategory);
                 database.Remove(removeCategory);
                 database.SaveChanges();
                 // System.Environment.Exit(1);
                 PrintDatabase();
             }
+
+        }
+        public static bool ManageProducts()
+        {
+            Console.WriteLine("Choose an option:");
+            Console.WriteLine("1) Add a Product");
+            Console.WriteLine("2) Remove a Product");
+            Console.WriteLine("3) Update a Product");
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    AddProduct();
+                    return true;
+                case "2":
+                    RemoveProduct();
+                    return true;
+                case "3":
+                    UpdateProduct();
+                    return true;
+                case "4":
+                    Exit();
+                    return true;
+                default:
+                    return true;
+            }
+
         }
         
         static void Main(string[] args)
