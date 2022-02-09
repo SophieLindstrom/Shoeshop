@@ -2,6 +2,7 @@
 using Shoeshop.Models;
 using Shoeshop.Admin;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Shoeshop
 {
@@ -48,7 +49,7 @@ namespace Shoeshop
                     ManageProducts();
                     return true;
                 case "3":
-                    Exit();
+                  // Exit();
                     return true;
                 default:
                     return true;
@@ -77,7 +78,7 @@ namespace Shoeshop
         }
         public static void AddCategory()
         {
-            PrintDatabase();
+            PrintCategories();
             Console.Write("Vilken kategori vill du lägga till?: ");
             var categoryName = Console.ReadLine();
 
@@ -91,11 +92,13 @@ namespace Shoeshop
 
                 database.Add(newCategory);
                 database.SaveChanges();
+                PrintCategories();
+                Console.WriteLine("Du har lagt till 1 ny kategori");
                 // System.Environment.Exit(1);
             }
 
         }
-        public static void PrintDatabase()
+        public static void PrintCategories()
         {
             using (var database = new ShoeshopContext())
             {
@@ -107,12 +110,24 @@ namespace Shoeshop
                 }
             }
         }
+        public static void PrintProducts()
+        {
+            using (var database = new ShoeshopContext())
+            {
+                var productList = database.Products;
+                foreach (var product in productList)
+                {
+                    Console.WriteLine(product.ProductCategoryId + "\t" + product.ProductName + "\t" + product.ProductPrice + "\t" + product.ProductInfo);
+
+                }
+            }
+        }
 
         public static void RemoveCategory()
         {
             using (var database = new ShoeshopContext())
             {
-                PrintDatabase();
+                PrintCategories();
 
                 Console.Write("Vilket kategorinummer vill du ta bort?: ");
 
@@ -127,7 +142,7 @@ namespace Shoeshop
                 database.Remove(removeCategory);
                 database.SaveChanges();
                 // System.Environment.Exit(1);
-                PrintDatabase();
+                PrintCategories();
             }
 
         }
@@ -146,19 +161,138 @@ namespace Shoeshop
                     RemoveProduct();
                     return true;
                 case "3":
-                    UpdateProduct();
+                   UpdateProduct();
                     return true;
                 case "4":
-                    Exit();
+                   // Exit();
                     return true;
                 default:
                     return true;
             }
 
         }
-        
-        static void Main(string[] args)
+        public static void AddProduct()
         {
+            PrintCategories();
+
+            Console.Write("Ange kategori: ");
+            var productCategoryId = int.Parse(Console.ReadLine());
+
+            Console.Write("Ange produktnamn: ");
+            var productName = Console.ReadLine();
+            Console.Write("Ange produktpris: ");
+            var productPrice = Console.ReadLine();
+            Console.Write("Ange produktinfo: ");
+            var productInfo = Console.ReadLine();
+
+            using (var database = new ShoeshopContext())
+            {
+                var newProduct = new Models.Product
+                {
+                    ProductCategoryId = productCategoryId,
+                    ProductName = productName,
+                    ProductPrice = decimal.Parse(productPrice),
+                    ProductInfo = productInfo
+
+                };
+
+                database.Add(newProduct);
+                database.SaveChanges();
+                Console.WriteLine("Du har lagt till 1 ny produkt");
+                PrintProducts();
+            }
+        }
+
+        public static void RemoveProduct()
+        {
+            using (var database = new ShoeshopContext())
+            {
+                PrintProducts();
+
+                Console.Write("Vilken produktnummer vill du ta bort?: ");
+
+
+                var productNumber = int.Parse(Console.ReadLine());
+                var removeProduct = new Models.Product
+                {
+                    Id = productNumber
+
+                };
+                database.Attach(removeProduct);
+                database.Remove(removeProduct);
+                database.SaveChanges();
+                // System.Environment.Exit(1);
+                PrintProducts();
+            }
+
+        }
+        //public static void UpdateProduct()
+        //{
+        //    using (var database = new ShoeshopContext())
+        //    {
+        //        PrintProducts();
+
+        //        Console.Write("Vilket produktnummer vill du uppdatera?: ");
+        //        var productNumber = int.Parse(Console.ReadLine());
+
+        //        Console.Write("Ange nytt produktpris: ");
+        //        var productPrice = Console.ReadLine();
+        //        Console.Write("Ange ny produktinfo: ");
+        //        var productInfo = Console.ReadLine();
+                
+        //        var updateProduct = new Models.Product
+               
+        //        {
+        //            Id = productNumber,
+        //            ProductPrice = decimal.Parse(productPrice),
+        //            ProductInfo = productInfo
+
+        //        };
+        //        database.Update(updateProduct);
+                
+        //        database.SaveChanges();
+        //        // System.Environment.Exit(1);
+        //        PrintProducts();
+
+
+        //    }
+
+        //}
+
+        public static void UpdateProduct()
+        {
+            using (var database = new ShoeshopContext())
+            {
+                PrintProducts();
+
+                Console.Write("Vilket produktnummer vill du uppdatera?: ");
+                var productNumber = int.Parse(Console.ReadLine());
+
+                //Console.Write("Ange nytt produktpris: ");
+                //var productPrice = Console.ReadLine();
+                Console.Write("Ange ny produktinfo: ");
+                var productInfo = Console.ReadLine();
+
+                var result = database.Products.SingleOrDefault(p => p.ProductInfo == productInfo);
+                if (result != null)
+                {
+                    
+                    result.ProductInfo = productInfo;
+                    database.SaveChanges();
+                }
+                
+
+               
+                // System.Environment.Exit(1);
+                PrintProducts();
+
+
+            }
+
+        }
+
+        static void Main(string[] args)
+             {
             //bool showMenu = true;
             //while (showMenu)
             //{
@@ -169,75 +303,52 @@ namespace Shoeshop
 
 
 
-            //    using (var db = new ShoeshopContext())
-            //{
-            //    var productcategories = db.Categories;
+                //    using (var db = new ShoeshopContext())
+                //{
+                //    var productcategories = db.Categories;
 
-            //    foreach (var category in productcategories)
-            //   {
-            //       Console.WriteLine(category.Id + "\t" + category.CategoryName);
-            //    }
-            //}
+                //    foreach (var category in productcategories)
+                //   {
+                //       Console.WriteLine(category.Id + "\t" + category.CategoryName);
+                //    }
+                //}
 
-            //using (var db = new ShoeshopContext())
-            //{
-            //    var cities = db.Products;
+                //using (var db = new ShoeshopContext())
+                //{
+                //    var cities = db.Products;
 
-            //    foreach (var city in cities)
-            //    {
-            //        Console.WriteLine(city.CityName);
-            //        using (var dbb = new ShoeshopContext())
-            //        {
-            //            var parkingHouses = dbb.ParkingHouses;
-            //            foreach (var house in parkingHouses)
-            //            {
-            //                if (city.Id == house.CityId)
-            //                    Console.WriteLine(house.HouseName);
-            //            }
+                //    foreach (var city in cities)
+                //    {
+                //        Console.WriteLine(city.CityName);
+                //        using (var dbb = new ShoeshopContext())
+                //        {
+                //            var parkingHouses = dbb.ParkingHouses;
+                //            foreach (var house in parkingHouses)
+                //            {
+                //                if (city.Id == house.CityId)
+                //                    Console.WriteLine(house.HouseName);
+                //            }
 
-            //        }
-            //    }
-            //}
+                //        }
+                //    }
+                //}
 
-            // while (true)
-            //{
-            //    using (var database = new ShoeshopContext())
-            //    {
-            //        var productList = database.Products;
-            //        foreach (var product in productList)
-            //        {
-            //            Console.WriteLine(product.Id + "\t" + String.Format("{0:.00}", product.ProductPrice) + "\t" + product.ProductName);
-            //        }
-            //    }
-
-
-            //Console.Write("Ange kategori:");
-            //    var productCategoryId = Console.ReadLine();
-
-            //    Console.Write("Ange namn:");
-            //    var productName = Console.ReadLine();
-            //Console.Write("Ange pris:");
-            //var productPrice = Console.ReadLine();
-            //Console.Write("Ange info:");
-            //var productInfo = Console.ReadLine();
-
-            //Console.Clear();
+                // while (true)
+                //{
+                //    using (var database = new ShoeshopContext())
+                //    {
+                //        var productList = database.Products;
+                //        foreach (var product in productList)
+                //        {
+                //            Console.WriteLine(product.Id + "\t" + String.Format("{0:.00}", product.ProductPrice) + "\t" + product.ProductName);
+                //        }
+                //    }
 
 
-            //         using (var database = new ShoeshopContext())
-            //           {
-            //                var newProduct = new Models.Product
-            //                {
-            //                    ProductCategoryId = int.Parse(productCategoryId),
-            //                    ProductName=productName,
-            //                    ProductPrice=decimal.Parse(productPrice),
-            //                    ProductInfo=productInfo
+                //Console.Clear();
 
-            //                };
 
-            //                database.Add(newProduct);
-            //               database.SaveChanges();
-            //            }
-        }
+              
+            }
     }
 }
